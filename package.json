@@ -1,0 +1,28 @@
+{
+  "name": "sql-library-mgr",
+  "version": "1.0.0",
+  "description": "1. CSS/Visual Changes\r     - transition on the profile picture when you mouse over the picture\r     - text shadow on the h1 titles\r     - background colors on main body and left section\r 2. Code\r     - NPM Start will start the app\r     - title page of each page is dynamicaly changed based on page user is on\r     - Links open up in a new tab\r     - added an error template and all errors do get handled properly\r     - data file with the appropriate data fields",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Feediz/sql-library-mgr.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Feediz/sql-library-mgr/issues"
+  },
+  "homepage": "https://github.com/Feediz/sql-library-mgr#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.2",
+    "pug": "^2.0.4",
+    "sequelize": "^5.21.5",
+    "sequelize-cli": "^5.5.1",
+    "sqlite3": "^4.1.1"
+  }
+}
