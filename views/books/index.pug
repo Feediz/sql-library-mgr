@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  div.subheader
+    h2 Books
+    p
+      a(href="/books/new" class="button") Create New Book
+  table
+    thead
+      tr
+        th Title
+        th Author
+        th Genre
+        th Year
+
+    tbody
+      each book in books
+        tr
+          td
+            a(href="/books/"+book.id+"/edit") #{book.title}
+          td= book.author
+          td= book.genre
+          td= book.year
