@@ -18,7 +18,11 @@ function handleRenderGet(view, req, res, books) {
 }
 
 function handleRenderGetSingle(view, req, res, book, title) {
-  res.render(view, { book, title });
+  if (book) {
+    res.render(view, { book, title });
+  } else {
+    res.sendStatus(404);
+  }
 }
 
 // get handlers
@@ -49,13 +53,15 @@ router.get(
 // GET -> new book form
 router.get("/new", (req, res) => {
   handleRenderGetSingle("books/new", req, res, {}, "Add New Book");
+  //res.render("books/new", { book: {}, title: "New Book" });
+  // res.send("ldskjfalsdfjadslfjalsdfj");
 });
 
 // post handlers
 
 // POST -> post new book to db
 router.post(
-  "/books/new",
+  "/",
   asyncHandler(async (req, res) => {
     let book;
     try {
@@ -82,7 +88,7 @@ router.post(
 
 // POST -> update book in db
 router.post(
-  "/books/:id",
+  "/:id/edit",
   asyncHandler(async (req, res) => {
     let book;
 
@@ -90,7 +96,7 @@ router.post(
       book = await Book.findByPk(req.params.id);
       if (book) {
         await book.update(req.body);
-        res.redirect("books/" + req.params.id);
+        res.redirect("/books/" + req.params.id + "/edit");
       } else {
         res.sendStatus(404);
       }
@@ -98,7 +104,7 @@ router.post(
       if (err.name === "SequelizeValidationError") {
         book = await Book.build(req.body);
         book.id = req.params.id;
-        res.render("books/edit", {
+        res.render("books/show", {
           book,
           errors: err.errors
         });

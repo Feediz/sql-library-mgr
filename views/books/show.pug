@@ -3,23 +3,25 @@ extends ../layout
 block content
   div.subheader
     h2 Update Book
+  include errors
+  form(action="/books/" + book.id + "/edit" method="post")
+    include form
+  //- form
+  //-   p
+  //-     label(for="title") Title
+  //-     input(type="text" name="title" id="title" value=book.title)
 
-  form
-    p
-      label(for="title") Title
-      input(type="text" name="title" id="title" value=book.title)
+  //-   p
+  //-     label(for="author") Author
+  //-     input(type="text" name="author" id="author" value=book.author)
 
-    p
-      label(for="author") Author
-      input(type="text" name="author" id="author" value=book.author)
+  //-   p
+  //-     label(for="genre") Genre
+  //-     input(type="text" name="genre" id="genre" value=book.genre)
 
-    p
-      label(for="genre") Genre
-      input(type="text" name="genre" id="genre" value=book.genre)
+  //-   p
+  //-     label(for="year") Year
+  //-     input(type="text" name="year" id="year" value=book.year)
 
-    p
-      label(for="year") Year
-      input(type="text" name="year" id="year" value=book.year)
-
-    p
-      input(type="submit" name="submit" value="Update Book")
+  //-   p
+  //-     input(type="submit" name="submit" value="Update Book")
