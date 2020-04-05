@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Book = require("../models").Book;
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 // async handler function to wrap each route
 function asyncHandler(cb) {
@@ -37,6 +39,43 @@ router.get(
   })
 );
 
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const searchTerm = req.body.q.toLowerCase();
+    //console.log("searchTerm");
+    //console.log(searchTerm);
+    const books = await Book.findAll({
+      where: {
+        [Op.or]: {
+          title: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+          author: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+          genre: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+          year: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+      },
+      offset: 5,
+      limit: 3,
+    });
+
+    if (books.length > 0) {
+      //handleRenderHome("books/index", req, res, books);
+      res.send(books);
+      //res.render("books/index", { books, title: "Home" });
+    } else {
+      res.send("No books found");
+    }
+  })
+);
+
 /** router => returns form to add book
  * @route /books/new
  * @method get
@@ -66,7 +105,7 @@ router.post(
         book = await Book.build(req.body);
         res.render("books/new-book", {
           book,
-          errors: err.errors
+          errors: err.errors,
         });
       } else {
         throw error; // error caught in the asyncHandler's catch block
@@ -116,7 +155,7 @@ router.post(
         book.id = req.params.id;
         res.render("books/update-book", {
           book,
-          errors: err.errors
+          errors: err.errors,
         });
       } else {
         throw error;
