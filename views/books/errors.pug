@@ -1,6 +1,14 @@
+- var titleCSS = ""
+- var authorCSS = ""
+
 if(errors)
   h2.error Oops an error occurred!
   ul.error
     each error in errors
       li
         =error.message
+        if(error.message.includes("Title"))
+          - titleCSS = true
+        if(error.message.includes("Author"))
+          - authorCSS = true
+

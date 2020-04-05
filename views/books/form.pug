@@ -1,9 +1,9 @@
 p
-  label(for="title") Title:
-  input(type="text" id="title" name="title" value=book.title)
+  label(class=titleCSS ? 'error' : '' for="title") Title:
+  input(class=titleCSS ? 'errorInput' : '' type="text" id="title" name="title" value=book.title)
 p
-  label(for="author") Author:
-  input(type="text" id="author" name="author" value=book.author)
+  label(class=authorCSS ? 'error' : '' for="author") Author:
+  input(class=authorCSS ? 'errorInput' : '' type="text" id="author" name="author" value=book.author)
 
 p
   label(for="genre") Genre:

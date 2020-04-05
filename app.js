@@ -1,10 +1,11 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-// const cookieParser = require("cookie-parser");
-//const logger = require("morgan");
 
+// default routes
 const routes = require("./routes/index");
+
+// books routes
 const books = require("./routes/books");
 
 const app = express();
@@ -13,10 +14,8 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-//app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
@@ -29,15 +28,15 @@ app.use((req, res, next) => {
 
 //error handler
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
   // render error
   res.status(err.status || 500); // set response status code
   if (err.status === 404) {
     res.render("error-page-not-found", { status: err.status });
   } else {
+    // show the error on the terminal
+    console.log(err.stack);
+
+    // show user friendly error on the UI
     res.render("error-server", { status: err.status });
   }
 });

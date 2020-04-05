@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  div.subheader
+    h2 Update Book
+  include errors
+  form(action="/books/" + book.id method="post")
+    include form
+  form(action="/books/"+book.id+"/delete" method="post" onsubmit="return confirm('Do you really want to delete this book?');")
+    p
+      input(type="submit" value="Delete Book")
