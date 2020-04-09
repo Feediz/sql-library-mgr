@@ -15,8 +15,8 @@ function asyncHandler(cb) {
   };
 }
 
-function handleRenderHome(view, req, res, books) {
-  res.render(view, { books, title: "Home" });
+function handleRenderHome(view, req, res, books, data) {
+  res.render(view, { books, title: "Home", data });
 }
 
 function handleRenderGet(view, req, res, book, title) {
@@ -34,41 +34,91 @@ function handleRenderGet(view, req, res, book, title) {
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    const books = await Book.findAll();
-    handleRenderHome("books/index", req, res, books);
+    let data = {};
+
+    data.startIndex = parseFloat(req.query.idx);
+
+    data.searchTerm = req.query.q;
+
+    data.limit = 3;
+
+    let books = "";
+    let count = 0;
+    //console.log("idx: " + startIndex + "\nterm: " + term + "\n");
+    if (data.startIndex > 0) {
+      // pagination
+      const iBooks = await Book.findAndCountAll({
+        where: {
+          [Op.or]: {
+            title: {
+              [Op.like]: `%${data.searchTerm}%`,
+            },
+            author: {
+              [Op.like]: `%${data.searchTerm}%`,
+            },
+            genre: {
+              [Op.like]: `%${data.searchTerm}%`,
+            },
+            year: {
+              [Op.like]: `%${data.searchTerm}%`,
+            },
+          },
+        },
+        offset: data.startIndex - 1,
+        limit: data.limit,
+      });
+      //res.send(iBooks.rows);
+      books = iBooks.rows;
+      data.totalCount = iBooks.count;
+    } else {
+      // show all
+      books = await Book.findAll();
+    }
+
+    console.log(data);
+
+    //console.log("req.query" + books);
+    handleRenderHome("books/index", req, res, books, data);
   })
 );
 
 router.post(
   "/",
   asyncHandler(async (req, res) => {
-    const searchTerm = req.body.q.toLowerCase();
+    let data = {};
+
+    data.searchTerm = req.body.q.toLowerCase();
+    data.limit = 3;
+    data.startIndex = 0;
     //console.log("searchTerm");
     //console.log(searchTerm);
-    const books = await Book.findAll({
+    const books = await Book.findAndCountAll({
       where: {
         [Op.or]: {
           title: {
-            [Op.like]: `%${searchTerm}%`,
+            [Op.like]: `%${data.searchTerm}%`,
           },
           author: {
-            [Op.like]: `%${searchTerm}%`,
+            [Op.like]: `%${data.searchTerm}%`,
           },
           genre: {
-            [Op.like]: `%${searchTerm}%`,
+            [Op.like]: `%${data.searchTerm}%`,
           },
           year: {
-            [Op.like]: `%${searchTerm}%`,
+            [Op.like]: `%${data.searchTerm}%`,
           },
         },
       },
-      offset: 5,
-      limit: 3,
+      offset: data.startIndex,
+      limit: data.limit,
     });
 
-    if (books.length > 0) {
-      //handleRenderHome("books/index", req, res, books);
-      res.send(books);
+    data.totalCount = books.count;
+
+    console.log(books.count);
+    if (books.rows.length > 0) {
+      handleRenderHome("books/index", req, res, books.rows, data);
+      //res.send(books);
       //res.render("books/index", { books, title: "Home" });
     } else {
       res.send("No books found");

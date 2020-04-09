@@ -1,0 +1,27 @@
+- var i = parseFloat(data.startIndex) + parseFloat(data.limit)+1;
+- var iPrevious = parseFloat(data.startIndex) - parseFloat(data.limit);
+- var cnt = data.totalCount;
+
+
+if iPrevious && iPrevious > 0
+  if parseFloat(iPrevious) < parseFloat(cnt)
+    p
+      a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
+  else 
+    p
+      a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
+
+if i && i <= cnt
+  if parseFloat(i) < parseFloat(cnt)
+    p
+      a(class="buttons" href=`/books/?idx=${i}&q=${data.searchTerm}`) next
+  else 
+    p
+      a(class="buttons" href=`/books/?idx=${cnt-1}&q=${data.searchTerm}`) next
+p= `startIndex: ${data.startIndex}`
+p= `searchTerm: ${data.searchTerm}`
+p= `totalCount: ${data.totalCount}`
+p= `limit: ${data.limit}`
+p= `i: ${i}`
+p= `cnt: ${cnt}`
+p= `iPrevious: ${iPrevious}`
