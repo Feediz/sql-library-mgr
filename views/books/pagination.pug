@@ -3,25 +3,55 @@
 - var cnt = data.totalCount;
 
 
-if iPrevious && iPrevious > 0
-  if parseFloat(iPrevious) < parseFloat(cnt)
-    p
-      a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
-  else 
-    p
-      a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
+- var currP = parseFloat(data.currPage);
+- var totalPages = parseFloat(data.pageCount);
+- var nextPage = -1;
+- var prevPage = -1;
 
-if i && i <= cnt
-  if parseFloat(i) < parseFloat(cnt)
-    p
-      a(class="buttons" href=`/books/?idx=${i}&q=${data.searchTerm}`) next
-  else 
-    p
-      a(class="buttons" href=`/books/?idx=${cnt-1}&q=${data.searchTerm}`) next
-p= `startIndex: ${data.startIndex}`
-p= `searchTerm: ${data.searchTerm}`
-p= `totalCount: ${data.totalCount}`
-p= `limit: ${data.limit}`
-p= `i: ${i}`
-p= `cnt: ${cnt}`
-p= `iPrevious: ${iPrevious}`
+
+if currP !== totalPages
+  - nextPage = currP + 1;
+
+if currP !== 1
+  - prevPage = currP - 1;
+
+
+if nextPage !== -1
+  p
+    a(class="buttons" href=`/books/?p=${nextPage}&q=${data.searchTerm}`) next
+
+
+if prevPage !== -1
+  p
+    a(class="buttons" href=`/books/?p=${prevPage}&q=${data.searchTerm}`) prev
+
+
+//- if iPrevious && iPrevious > 0
+//-   if parseFloat(iPrevious) < parseFloat(cnt)
+//-     p
+//-       a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
+//-   else 
+//-     p
+//-       a(class="buttons" href=`/books/?idx=${iPrevious}&q=${data.searchTerm}`) prev
+
+//- if i && i <= cnt
+//-   if parseFloat(i) < parseFloat(cnt)
+//-     p
+//-       a(class="buttons" href=`/books/?idx=${i}&q=${data.searchTerm}`) next
+//-   else 
+//-     p
+//-       a(class="buttons" href=`/books/?idx=${cnt-1}&q=${data.searchTerm}`) next
+
+
+p= `currPage: ${data.currPage}`
+p= `itemsPerPage: ${data.itemsPerPage}`
+p= `totalRecords: ${data.totalRecords}`
+p= `pageCount: ${data.pageCount}`
+
+//- p= `startIndex: ${data.startIndex}`
+//- p= `searchTerm: ${data.searchTerm}`
+//- p= `totalCount: ${data.totalCount}`
+//- p= `limit: ${data.limit}`
+//- p= `i: ${i}`
+//- p= `cnt: ${cnt}`
+//- p= `iPrevious: ${iPrevious}`

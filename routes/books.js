@@ -35,6 +35,11 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     let data = {};
+    let currPage = 1;
+
+    if (req.query.p > 0) {
+      currPage = req.query.p;
+    }
 
     data.startIndex = parseFloat(req.query.idx);
 
@@ -75,6 +80,12 @@ router.get(
       books = await Book.findAll();
     }
 
+    // if()
+    // data.currPage = 1;
+    // data.itemsPerPage = 3;
+    // data.totalCount = books.count;
+    // data.pageCount = Math.ceil(data.totalCount / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
+
     console.log(data);
 
     //console.log("req.query" + books);
@@ -90,6 +101,7 @@ router.post(
     data.searchTerm = req.body.q.toLowerCase();
     data.limit = 3;
     data.startIndex = 0;
+
     //console.log("searchTerm");
     //console.log(searchTerm);
     const books = await Book.findAndCountAll({
@@ -113,7 +125,10 @@ router.post(
       limit: data.limit,
     });
 
-    data.totalCount = books.count;
+    data.currPage = 1;
+    data.itemsPerPage = 3;
+    data.totalRecords = books.count;
+    data.pageCount = Math.ceil(data.totalRecords / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
 
     console.log(books.count);
     if (books.rows.length > 0) {
