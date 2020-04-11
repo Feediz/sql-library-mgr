@@ -35,60 +35,74 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     let data = {};
-    let currPage = 1;
+    // let currPage = 1;
+    // let totalPages = 1;
 
     if (req.query.p > 0) {
-      currPage = req.query.p;
+      data.currPage = req.query.p;
+    } else {
+      data.currPage = 1;
+    }
+    //data.currPage = currPage;
+
+    if (req.query.c > 0) {
+      data.pageCount = req.query.c;
     }
 
-    data.startIndex = parseFloat(req.query.idx);
+    let offSet = (data.currPage - 1) * 3;
 
-    data.searchTerm = req.query.q;
+    // data.startIndex = parseFloat(req.query.idx);
+    //res.send("here");
+    // res.send(req.query.q);
+    let searchQuery = req.params.q === "";
+    //res.send(x);
+    if (!searchQuery) {
+      data.searchTerm = "";
+    } else {
+      data.searchTerm = req.query.q;
+    }
 
     data.limit = 3;
 
     let books = "";
-    let count = 0;
-    //console.log("idx: " + startIndex + "\nterm: " + term + "\n");
-    if (data.startIndex > 0) {
-      // pagination
-      const iBooks = await Book.findAndCountAll({
-        where: {
-          [Op.or]: {
-            title: {
-              [Op.like]: `%${data.searchTerm}%`,
-            },
-            author: {
-              [Op.like]: `%${data.searchTerm}%`,
-            },
-            genre: {
-              [Op.like]: `%${data.searchTerm}%`,
-            },
-            year: {
-              [Op.like]: `%${data.searchTerm}%`,
+    // let count = 0;
+
+    if (data.currPage > 0) {
+      if (data.searchTerm !== "") {
+        const iBooks = await Book.findAndCountAll({
+          where: {
+            [Op.or]: {
+              title: {
+                [Op.like]: `%${data.searchTerm}%`,
+              },
+              author: {
+                [Op.like]: `%${data.searchTerm}%`,
+              },
+              genre: {
+                [Op.like]: `%${data.searchTerm}%`,
+              },
+              year: {
+                [Op.like]: `%${data.searchTerm}%`,
+              },
             },
           },
-        },
-        offset: data.startIndex - 1,
-        limit: data.limit,
-      });
-      //res.send(iBooks.rows);
-      books = iBooks.rows;
-      data.totalCount = iBooks.count;
+          offset: offSet,
+          limit: data.limit,
+        });
+        books = iBooks.rows;
+        res.send(data.searchTerm.length + "asdf");
+      } else {
+        // show all
+        books = await Book.findAll();
+        // res.send("all");
+      }
+      // data.totalCount = iBooks.count;
+      // res.send("search");
     } else {
       // show all
       books = await Book.findAll();
+      res.send("all");
     }
-
-    // if()
-    // data.currPage = 1;
-    // data.itemsPerPage = 3;
-    // data.totalCount = books.count;
-    // data.pageCount = Math.ceil(data.totalCount / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
-
-    console.log(data);
-
-    //console.log("req.query" + books);
     handleRenderHome("books/index", req, res, books, data);
   })
 );
@@ -102,8 +116,6 @@ router.post(
     data.limit = 3;
     data.startIndex = 0;
 
-    //console.log("searchTerm");
-    //console.log(searchTerm);
     const books = await Book.findAndCountAll({
       where: {
         [Op.or]: {
@@ -133,8 +145,6 @@ router.post(
     console.log(books.count);
     if (books.rows.length > 0) {
       handleRenderHome("books/index", req, res, books.rows, data);
-      //res.send(books);
-      //res.render("books/index", { books, title: "Home" });
     } else {
       res.send("No books found");
     }
