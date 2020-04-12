@@ -1,4 +1,4 @@
-# StaticNodeJS
+# SQL Library Manager
 
 ###### Project 8
 
