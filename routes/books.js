@@ -16,10 +16,12 @@ function asyncHandler(cb) {
   };
 }
 
+// function to handle rendering from home page
 function handleRenderHome(view, req, res, books, data) {
   res.render(view, { books, title: "Home", data });
 }
 
+// function to handle rendering from any page except home page
 function handleRenderGet(view, req, res, book, title) {
   if (book) {
     res.render(view, { book, title });
@@ -35,46 +37,38 @@ function handleRenderGet(view, req, res, book, title) {
 router.get(
   "/",
   asyncHandler(async (req, res) => {
+    // will be used to hold information related to pagination and search feature
     let data = {};
-    // let currPage = 1;
-    // let totalPages = 1;
 
+    // try to get current page from query string and if it's not there we set it to one
     if (req.query.p > 0) {
       data.currPage = req.query.p;
     } else {
       data.currPage = 1;
     }
-    //data.currPage = currPage;
 
+    // try to get total pages from query string and if it exists
     if (req.query.c > 0) {
       data.pageCount = req.query.c;
     }
 
     let offSet = (data.currPage - 1) * 3;
 
-    // data.startIndex = parseFloat(req.query.idx);
-    //res.send("here");
-    // res.send(req.query.q);
-    // let searchQuery = req.query.q === "";
-    //res.send(req.query.q.length);
-    // res.send(searchQuery);
-    // if (!searchQuery) {
+    // try to get search term from query string and if it doesn't exist we set it to empty string
     if (req.query.q === undefined) {
       data.searchTerm = "";
     } else {
       data.searchTerm = req.query.q;
     }
 
-    // res.send("hhh" + data.searchTerm);
-
     data.limit = 3;
 
+    // will hold book records
     let books = "";
-    // let count = 0;
 
     if (data.currPage > 0) {
       if (data.searchTerm !== "") {
-        let iBooks = await Book.findAndCountAll({
+        let tempBooks = await Book.findAndCountAll({
           where: {
             [Op.or]: {
               title: {
@@ -94,30 +88,20 @@ router.get(
           offset: offSet,
           limit: data.limit,
         });
-        books = iBooks.rows;
-        // res.send(data.searchTerm.length + "asdf");
+        books = tempBooks.rows;
       } else {
         // show all
-        // books = await Book.findAll();
-        const myBook = await Book.findAndCountAll({
+        const tempBooks = await Book.findAndCountAll({
           offset: offSet,
           limit: data.limit,
         });
-        console.log("sdlfjaslfkadslfj");
-        books = myBook.rows;
-        //res.send(books);
+        books = tempBooks.rows;
         data.itemsPerPage = 3;
-        data.totalRecords = myBook.count;
+        data.totalRecords = tempBooks.count;
         data.pageCount = Math.ceil(data.totalRecords / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
-
-        // res.send("all");
       }
-      // data.totalCount = iBooks.count;
-      // res.send("search");
     } else {
-      // show all
-      books = await Book.findAll();
-      res.send("all");
+      res.sendStatus(404);
     }
     handleRenderHome("books/index", req, res, books, data);
   })
@@ -126,6 +110,7 @@ router.get(
 router.post(
   "/",
   asyncHandler(async (req, res) => {
+    // will be used to hold information related to pagination and search feature
     let data = {};
 
     data.searchTerm = req.body.q.toLowerCase();
@@ -158,11 +143,10 @@ router.post(
     data.totalRecords = books.count;
     data.pageCount = Math.ceil(data.totalRecords / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
 
-    console.log(books.count);
     if (books.rows.length > 0) {
       handleRenderHome("books/index", req, res, books.rows, data);
     } else {
-      res.send("No books found");
+      res.sendStatus(404);
     }
   })
 );

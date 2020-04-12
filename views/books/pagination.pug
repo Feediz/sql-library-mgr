@@ -1,7 +1,8 @@
-- var currP = parseFloat(data.currPage);
-- var totalPages = parseFloat(data.pageCount);
-- var nextPage = -1;
-- var prevPage = -1;
+- var currP = parseFloat(data.currPage); // set the current page
+- var totalPages = parseFloat(data.pageCount); // set total pages
+- var nextPage = -1; // init next page with -1 for now
+- var prevPage = -1; // init previous page with -1 for now
+
 
 
 if currP !== totalPages
@@ -23,8 +24,3 @@ if nextPage !== -1 && currP && totalPages
 if nextPage !== -1 || prevPage !== -1
   li(class="liHorizontal")
     i(class="paginationLabel")= `Showing page ${currP} of ${totalPages}`
-
-//- p= `currPage: ${data.currPage}`
-//- p= `itemsPerPage: ${data.itemsPerPage}`
-//- p= `totalRecords: ${data.totalRecords}`
-//- p= `pageCount: ${data.pageCount}`
