@@ -10,17 +10,21 @@ if currP !== totalPages
 if currP !== 1
   - prevPage = currP - 1;
 
+ul
+if prevPage !== -1 && currP && totalPages
+  li(class="liHorizontal")
+    a(class="buttons previous round" href=`/books/?c=${totalPages}&p=${prevPage}&q=${data.searchTerm}`) &#8249;
+
 
 if nextPage !== -1 && currP && totalPages
-  p
-    a(class="buttons" href=`/books/?c=${totalPages}&p=${nextPage}&q=${data.searchTerm}`) next
+  li(class="liHorizontal")
+    a(class="buttons next round" href=`/books/?c=${totalPages}&p=${nextPage}&q=${data.searchTerm}`) &#8250;
 
+if nextPage !== -1 || prevPage !== -1
+  li(class="liHorizontal")
+    i(class="paginationLabel")= `Showing page ${currP} of ${totalPages}`
 
-if prevPage !== -1 && currP && totalPages
-  p
-    a(class="buttons" href=`/books/?c=${totalPages}&p=${prevPage}&q=${data.searchTerm}`) prev
-
-p= `currPage: ${data.currPage}`
-p= `itemsPerPage: ${data.itemsPerPage}`
-p= `totalRecords: ${data.totalRecords}`
-p= `pageCount: ${data.pageCount}`
+//- p= `currPage: ${data.currPage}`
+//- p= `itemsPerPage: ${data.itemsPerPage}`
+//- p= `totalRecords: ${data.totalRecords}`
+//- p= `pageCount: ${data.pageCount}`

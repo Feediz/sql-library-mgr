@@ -10,6 +10,7 @@ function asyncHandler(cb) {
     try {
       await cb(req, res, next);
     } catch (err) {
+      console.log(err);
       res.status(500).send(err);
     }
   };
@@ -54,13 +55,17 @@ router.get(
     // data.startIndex = parseFloat(req.query.idx);
     //res.send("here");
     // res.send(req.query.q);
-    let searchQuery = req.params.q === "";
-    //res.send(x);
-    if (!searchQuery) {
+    // let searchQuery = req.query.q === "";
+    //res.send(req.query.q.length);
+    // res.send(searchQuery);
+    // if (!searchQuery) {
+    if (req.query.q === undefined) {
       data.searchTerm = "";
     } else {
       data.searchTerm = req.query.q;
     }
+
+    // res.send("hhh" + data.searchTerm);
 
     data.limit = 3;
 
@@ -69,7 +74,7 @@ router.get(
 
     if (data.currPage > 0) {
       if (data.searchTerm !== "") {
-        const iBooks = await Book.findAndCountAll({
+        let iBooks = await Book.findAndCountAll({
           where: {
             [Op.or]: {
               title: {
@@ -90,10 +95,21 @@ router.get(
           limit: data.limit,
         });
         books = iBooks.rows;
-        res.send(data.searchTerm.length + "asdf");
+        // res.send(data.searchTerm.length + "asdf");
       } else {
         // show all
-        books = await Book.findAll();
+        // books = await Book.findAll();
+        const myBook = await Book.findAndCountAll({
+          offset: offSet,
+          limit: data.limit,
+        });
+        console.log("sdlfjaslfkadslfj");
+        books = myBook.rows;
+        //res.send(books);
+        data.itemsPerPage = 3;
+        data.totalRecords = myBook.count;
+        data.pageCount = Math.ceil(data.totalRecords / data.itemsPerPage); // to get total pages needed we will divide total records by items per page and round up
+
         // res.send("all");
       }
       // data.totalCount = iBooks.count;
