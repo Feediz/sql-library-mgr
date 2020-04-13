@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 
 //error handler
 app.use((err, req, res, next) => {
+  console.log("in error handler");
   // render error
   res.status(err.status || 500); // set response status code
   if (err.status === 404) {

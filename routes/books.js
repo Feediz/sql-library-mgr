@@ -22,11 +22,19 @@ function handleRenderHome(view, req, res, books, data) {
 }
 
 // function to handle rendering from any page except home page
-function handleRenderGet(view, req, res, book, title) {
-  if (book) {
-    res.render(view, { book, title });
-  } else {
-    res.sendStatus(404);
+function handleRenderGet(view, req, res, book, title, next = null) {
+  try {
+    if (book) {
+      let tmpTitle = "";
+      if (book.title !== undefined) {
+        tmpTitle = " - " + book.title;
+      }
+      res.render(view, { book, title: title + tmpTitle });
+    } else {
+      res.render("error-page-not-found", {});
+    }
+  } catch (error) {
+    res.status(500).send(error);
   }
 }
 
@@ -103,7 +111,11 @@ router.get(
     } else {
       res.sendStatus(404);
     }
-    handleRenderHome("books/index", req, res, books, data);
+    if (books) {
+      handleRenderHome("books/index", req, res, books, data);
+    } else {
+      res.sendStatus(404);
+    }
   })
 );
 
@@ -195,15 +207,9 @@ router.post(
  */
 router.get(
   "/:id",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res, next) => {
     const book = await Book.findByPk(req.params.id);
-    handleRenderGet(
-      "books/update-book",
-      req,
-      res,
-      book,
-      "Update Book - " + book.title
-    );
+    handleRenderGet("books/update-book", req, res, book, "Update Book", next);
   })
 );
 
